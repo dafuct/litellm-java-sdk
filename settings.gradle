@@ -1,0 +1,12 @@
+rootProject.name = 'litellm-java-sdk'
+
+dependencyResolutionManagement {
+    versionCatalogs {
+        libs {
+            version('spring-boot', '3.4.0')
+            version('junit', '5.11.0')
+            version('mockito', '5.14.0')
+            version('assertj', '3.26.3')
+        }
+    }
+}

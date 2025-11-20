@@ -1,0 +1,114 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.0' apply false
+    id 'io.spring.dependency-management' version '1.1.6'
+    id 'io.freefair.lombok' version '8.10.2'
+    id 'jacoco'
+    id 'maven-publish'
+    id 'signing'
+}
+
+group = 'com.litellm'
+version = '1.0.0'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-webflux:3.4.0'
+    implementation 'io.projectreactor:reactor-core:3.7.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.2'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2'
+    implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:3.4.0'
+    testImplementation 'io.projectreactor:reactor-test:3.7.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.0'
+    testImplementation 'org.junit.platform:junit-platform-launcher:1.11.0'
+    testImplementation 'org.mockito:mockito-core:5.14.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.14.0'
+    testImplementation 'org.assertj:assertj-core:3.26.3'
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
+
+tasks.jacocoTestReport {
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+// Generate Javadoc JAR
+tasks.register('javadocJar', Jar) {
+    archiveClassifier = 'javadoc'
+    from tasks.javadoc
+}
+
+// Generate sources JAR
+tasks.register('sourcesJar', Jar) {
+    archiveClassifier = 'sources'
+    from sourceSets.main.allJava
+}
+
+// Publication configuration
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifactId = 'litellm-java-sdk'
+            groupId = 'com.litellm'
+            version = '1.0.0'
+
+            // Main artifact
+            artifact tasks.jar
+
+            // Javadoc and sources
+            artifact tasks.javadocJar
+            artifact tasks.sourcesJar
+
+            // POM configuration
+            pom {
+                name = 'LiteLLM Java SDK'
+                description = 'A reactive Java SDK for LiteLLM - unified interface for multiple LLM providers'
+                url = 'https://github.com/yourusername/litellm-java-sdk'
+                licenses {
+                    license {
+                        name = 'MIT'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'yourgithubusername'
+                        name = 'Your Name'
+                        email = 'your.email@example.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:https://github.com/yourusername/litellm-java-sdk.git'
+                    developerConnection = 'scm:git:git@github.com:yourusername/litellm-java-sdk.git'
+                    url = 'https://github.com/yourusername/litellm-java-sdk'
+                }
+            }
+        }
+    }
+}
+
+// Signing (required for Maven Central)
+signing {
+    sign publishing.publications.maven
+}
+
+// Configure Javadoc
+tasks.javadoc {
+    options.addStringOption('Xdoclint:none', '-quiet')
+    options.addStringOption('Xmaxwarns', '500')
+}
