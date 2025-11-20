@@ -74,120 +74,6 @@ ChatCompletionResponse response = client.chatCompletion(request);
 System.out.println(response.getContent());
 ```
 
-### Installation via Dependency
-
-Add the SDK as a dependency to your project:
-
-#### Gradle (build.gradle)
-
-**For Maven Central (recommended):**
-```groovy
-dependencies {
-    implementation 'com.litellm:litellm-java-sdk:1.0.0'
-}
-```
-
-**For GitHub Packages:**
-```groovy
-// settings.gradle
-dependencyResolutionManagement {
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/yourusername/litellm-java-sdk")
-            credentials {
-                username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
-                password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
-            }
-        }
-        mavenCentral()
-    }
-}
-
-// build.gradle
-dependencies {
-    implementation 'com.litellm:litellm-java-sdk:1.0.0'
-}
-```
-
-#### Maven (pom.xml)
-
-**For Maven Central:**
-```xml
-<dependencies>
-    <dependency>
-        <groupId>com.litellm</groupId>
-        <artifactId>litellm-java-sdk</artifactId>
-        <version>1.0.0</version>
-    </dependency>
-</dependencies>
-```
-
-**For GitHub Packages:**
-```xml
-<repositories>
-    <repository>
-        <id>github-packages</id>
-        <url>https://maven.pkg.github.com/yourusername/litellm-java-sdk</url>
-    </repository>
-</repositories>
-
-<dependencies>
-    <dependency>
-        <groupId>com.litellm</groupId>
-        <artifactId>litellm-java-sdk</artifactId>
-        <version>1.0.0</version>
-    </dependency>
-</dependencies>
-```
-
-### Usage Example with Dependency
-
-```java
-import com.litellm.sdk.client.LiteLLMClient;
-import com.litellm.sdk.config.*;
-
-public class MyApplication {
-    public static void main(String[] args) {
-        // Build client using ClientBuilder
-        LiteLLMClient client = ClientBuilder.builder()
-            .withProvider(ProviderConfig.builder()
-                .id("openai")
-                .name("OpenAI")
-                .apiKey(System.getenv("OPENAI_API_KEY"))
-                .baseUrl("https://api.openai.com/v1")
-                .models(List.of("gpt-3.5-turbo", "gpt-4"))
-                .weight(1)
-                .build())
-            .withCache(CacheConfig.builder()
-                .ttl(Duration.ofMinutes(10))
-                .maxSize(1000)
-                .build())
-            .withRetryPolicy(RetryConfig.builder()
-                .maxAttempts(3)
-                .initialDelay(Duration.ofSeconds(1))
-                .build())
-            .build();
-
-        // Use the client
-        Message message = Message.builder()
-            .role(Message.Role.USER)
-            .content("Hello, world!")
-            .build();
-
-        ChatCompletionRequest request = ChatCompletionRequest.builder()
-            .model("gpt-3.5-turbo")
-            .messages(List.of(message))
-            .temperature(0.7)
-            .maxTokens(100)
-            .build();
-
-        ChatCompletionResponse response = client.chatCompletion(request).block();
-        System.out.println(response.content());
-    }
-}
-```
-
 ### Async Usage Example
 
 ```java
@@ -314,7 +200,7 @@ ProviderConfig config = ProviderConfig.builder()
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) file for details.
+Apache License 2.0 - see [LICENSE](LICENSE) file for details.
 
 ## Support
 
