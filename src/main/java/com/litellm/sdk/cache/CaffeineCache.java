@@ -9,17 +9,16 @@ import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.Objects;
 
 public class CaffeineCache implements CacheManager {
     private final Cache<String, ChatCompletionResponse> cache;
-    private final CacheConfig config;
-    private volatile long hitCount = 0;
-    private volatile long missCount = 0;
-    private volatile long evictionCount = 0;
+    private final AtomicLong hitCount = new AtomicLong(0);
+    private final AtomicLong missCount = new AtomicLong(0);
+    private final AtomicLong evictionCount = new AtomicLong(0);
 
     public CaffeineCache(CacheConfig config) {
-        this.config = config;
 
         Caffeine<Object, Object> caffeine = Caffeine.newBuilder()
             .maximumSize(config.maxSize())
@@ -34,7 +33,7 @@ public class CaffeineCache implements CacheManager {
         }
 
         this.cache = caffeine
-            .evictionListener((key, value, cause) -> evictionCount++)
+            .evictionListener((key, value, cause) -> evictionCount.incrementAndGet())
             .build();
     }
 
@@ -45,10 +44,10 @@ public class CaffeineCache implements CacheManager {
             ChatCompletionResponse response = cache.getIfPresent(key);
 
             if (response != null) {
-                hitCount++;
+                hitCount.incrementAndGet();
                 return Mono.just(response);
             } else {
-                missCount++;
+                missCount.incrementAndGet();
                 return Mono.empty();
             }
         });
@@ -75,7 +74,7 @@ public class CaffeineCache implements CacheManager {
 
     @Override
     public CacheStats getStats() {
-        return new CacheStats(hitCount, missCount, evictionCount, (int) cache.estimatedSize());
+        return new CacheStats(hitCount.get(), missCount.get(), evictionCount.get(), (int) cache.estimatedSize());
     }
 
     @Override

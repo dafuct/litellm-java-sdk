@@ -1,12 +1,12 @@
 package com.litellm.sdk.unit.cache;
 
+import com.litellm.sdk.cache.CaffeineCache;
 import com.litellm.sdk.config.CacheConfig;
 import com.litellm.sdk.model.request.ChatCompletionRequest;
 import com.litellm.sdk.model.request.Message;
 import com.litellm.sdk.model.response.ChatCompletionResponse;
 import com.litellm.sdk.model.response.ChatCompletionResponse.Choice;
 import com.litellm.sdk.model.response.ChatCompletionResponse.Choice.ResponseMessage;
-import com.litellm.sdk.cache.CaffeineCache;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,9 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("CaffeineCache Unit Tests")
