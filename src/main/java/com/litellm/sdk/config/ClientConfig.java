@@ -16,7 +16,7 @@ public record ClientConfig(List<ProviderConfig> providers, RoutingStrategyConfig
         }
 
         boolean hasEnabledProvider = providers.stream()
-                .anyMatch(ProviderConfig::enabled);
+                .anyMatch(p -> p.enabled() != null && p.enabled());
 
         if (!hasEnabledProvider) {
             throw new IllegalArgumentException("At least one provider must be enabled");
@@ -33,7 +33,7 @@ public record ClientConfig(List<ProviderConfig> providers, RoutingStrategyConfig
 
     public List<ProviderConfig> getEnabledProviders() {
         return providers.stream()
-                .filter(ProviderConfig::enabled)
+                .filter(p -> p.enabled() != null && p.enabled())
                 .toList();
     }
 }

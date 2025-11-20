@@ -1,6 +1,7 @@
 package com.litellm.sdk.client;
 
 import com.litellm.sdk.config.ClientConfig;
+import com.litellm.sdk.config.RetryConfig;
 import com.litellm.sdk.error.LiteLLMException;
 import com.litellm.sdk.error.RetryExhaustedException;
 import com.litellm.sdk.model.request.ChatCompletionRequest;
@@ -10,6 +11,9 @@ import com.litellm.sdk.model.response.ChatCompletionResponse;
 import com.litellm.sdk.model.response.EmbeddingResponse;
 import com.litellm.sdk.model.response.TextCompletionResponse;
 import com.litellm.sdk.provider.Provider;
+import com.litellm.sdk.provider.anthropic.AnthropicProvider;
+import com.litellm.sdk.provider.cohere.CohereProvider;
+import com.litellm.sdk.provider.openai.OpenAIProvider;
 import com.litellm.sdk.retry.RetryPolicy;
 import com.litellm.sdk.routing.Router;
 import com.litellm.sdk.routing.strategy.RoundRobinStrategy;
@@ -30,7 +34,7 @@ public class AsyncLiteLLMClient {
 
     public AsyncLiteLLMClient(ClientConfig config) {
         this.config = config;
-        this.retryPolicy = new RetryPolicy(config.retry() != null ? config.retry() : com.litellm.sdk.config.RetryConfig.builder().build());
+        this.retryPolicy = new RetryPolicy(config.retry() != null ? config.retry() : RetryConfig.builder().build());
         List<Provider> providers = config.providers().stream()
                 .map(this::createProvider)
                 .toList();
@@ -121,9 +125,9 @@ public class AsyncLiteLLMClient {
     private Provider createProvider(com.litellm.sdk.config.ProviderConfig config) {
         String name = config.id();
         return switch (name.toLowerCase()) {
-            case "openai" -> new com.litellm.sdk.provider.openai.OpenAIProvider(config);
-            case "anthropic" -> new com.litellm.sdk.provider.anthropic.AnthropicProvider(config);
-            case "cohere" -> new com.litellm.sdk.provider.cohere.CohereProvider(config);
+            case "openai" -> new OpenAIProvider(config);
+            case "anthropic" -> new AnthropicProvider(config);
+            case "cohere" -> new CohereProvider(config);
             default -> throw new IllegalArgumentException("Unknown provider: " + name);
         };
     }
