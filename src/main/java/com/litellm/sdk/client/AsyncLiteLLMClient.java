@@ -11,9 +11,7 @@ import com.litellm.sdk.model.response.ChatCompletionResponse;
 import com.litellm.sdk.model.response.EmbeddingResponse;
 import com.litellm.sdk.model.response.TextCompletionResponse;
 import com.litellm.sdk.provider.Provider;
-import com.litellm.sdk.provider.anthropic.AnthropicProvider;
-import com.litellm.sdk.provider.cohere.CohereProvider;
-import com.litellm.sdk.provider.openai.OpenAIProvider;
+import com.litellm.sdk.provider.LiteLLMProvider;
 import com.litellm.sdk.retry.RetryPolicy;
 import com.litellm.sdk.routing.Router;
 import com.litellm.sdk.routing.strategy.RoundRobinStrategy;
@@ -123,12 +121,7 @@ public class AsyncLiteLLMClient {
     }
 
     private Provider createProvider(com.litellm.sdk.config.ProviderConfig config) {
-        String name = config.id();
-        return switch (name.toLowerCase()) {
-            case "openai" -> new OpenAIProvider(config);
-            case "anthropic" -> new AnthropicProvider(config);
-            case "cohere" -> new CohereProvider(config);
-            default -> throw new IllegalArgumentException("Unknown provider: " + name);
-        };
+        // Use a single generic provider for all configurations
+        return new LiteLLMProvider(config);
     }
 }

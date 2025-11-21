@@ -122,7 +122,7 @@ class LiteLLMClientTest {
 
         // Then
         assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo("chat-123");
+        assertThat(result.id()).isEqualTo("chat-123");
         assertThat(result.getContent()).isEqualTo("Hello! How can I help you?");
         verify(mockRouter).routeChatCompletion(anyList(), any(ChatCompletionRequest.class));
     }

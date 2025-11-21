@@ -1,4 +1,4 @@
-package com.litellm.sdk.provider.openai;
+package com.litellm.sdk.provider;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,9 +13,6 @@ import com.litellm.sdk.model.response.ChatCompletionResponse.Choice;
 import com.litellm.sdk.model.response.ChatCompletionResponse.Choice.ResponseMessage;
 import com.litellm.sdk.model.response.TextCompletionResponse;
 import com.litellm.sdk.model.response.EmbeddingResponse;
-import com.litellm.sdk.provider.Provider;
-import com.litellm.sdk.provider.ProviderHealth;
-import com.litellm.sdk.provider.ProviderMetrics;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import reactor.core.publisher.Mono;
@@ -32,14 +29,14 @@ import java.util.List;
 
 @Getter
 @EqualsAndHashCode(callSuper = false)
-public class OpenAIProvider implements Provider {
+public class LiteLLMProvider implements Provider {
     private final ProviderConfig config;
     private volatile HealthStatus healthStatus = HealthStatus.HEALTHY;
     private volatile String failureReason;
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
 
-    public OpenAIProvider(ProviderConfig config) {
+    public LiteLLMProvider(ProviderConfig config) {
         this.config = config;
         this.httpClient = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(30))
@@ -84,7 +81,7 @@ public class OpenAIProvider implements Provider {
 
     @Override
     public String getName() {
-        return "openai";
+        return config.name() != null ? config.name().toLowerCase() : config.id().toLowerCase();
     }
 
     @Override
@@ -125,7 +122,7 @@ public class OpenAIProvider implements Provider {
 
             } catch (Exception e) {
                 updateHealth(HealthStatus.UNHEALTHY, e.getMessage());
-                throw new RuntimeException("Failed to call OpenAI API", e);
+                throw new RuntimeException("Chat completion failed: " + e.getMessage(), e);
             }
         })
         .retryWhen(Retry.backoff(3, Duration.ofSeconds(1)))
@@ -257,8 +254,6 @@ public class OpenAIProvider implements Provider {
     @Override
     public Mono<TextCompletionResponse> textCompletion(TextCompletionRequest request) {
         return Mono.fromCallable(() -> {
-            String model = OpenAIModels.resolveModel(request.model());
-
             // Convert to chat completion format
             ChatCompletionRequest chatRequest = ChatCompletionRequest.builder()
                 .model(request.model())
@@ -280,10 +275,10 @@ public class OpenAIProvider implements Provider {
             ChatCompletionResponse chatResponse = chatCompletion(chatRequest).block();
 
             return TextCompletionResponse.builder()
-                .id(chatResponse.getId())
+                .id(chatResponse.id())
                 .content(chatResponse.getContent())
                 .provider(getName())
-                .model(model)
+                .model(request.model())
                 .build();
         });
     }
@@ -291,12 +286,12 @@ public class OpenAIProvider implements Provider {
     @Override
     public Mono<EmbeddingResponse> createEmbedding(EmbeddingRequest request) {
         return Mono.fromCallable(() -> {
-            String model = OpenAIModels.resolveModel(request.model());
-
+            // For now, return a minimal embedding response
+            // In a real implementation, this would call the embedding API endpoint
             return EmbeddingResponse.builder()
                 .id(request.id())
                 .provider(getName())
-                .model(model)
+                .model(request.model())
                 .build();
         });
     }

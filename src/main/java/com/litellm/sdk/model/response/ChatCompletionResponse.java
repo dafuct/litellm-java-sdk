@@ -1,38 +1,19 @@
 package com.litellm.sdk.model.response;
 
 import lombok.Builder;
-import lombok.Value;
 
 import java.time.Instant;
+import java.util.List;
+
 import com.litellm.sdk.model.common.Usage;
 
-@Value
 @Builder(toBuilder = true)
-public class ChatCompletionResponse {
-    private String id;
-    private Long created;
-    private String object;
-    private String model;
-    private String provider;
-    private java.util.List<Choice> choices;
-    private Usage usage;
-    private Boolean cached;
-    private Instant timestamp;
-
-    @Value
+public record ChatCompletionResponse(String id, Long created, String object, String model, String provider,
+                                     List<Choice> choices, Usage usage, Boolean cached, Instant timestamp) {
     @Builder(toBuilder = true)
-    public static class Choice {
-        private String finishReason;
-        private Integer index;
-        private ResponseMessage message;
-
-        @Value
+    public record Choice(String finishReason, Integer index, ResponseMessage message) {
         @Builder(toBuilder = true)
-        public static class ResponseMessage {
-            private String content;
-            private String role;
-            private java.util.List<Object> images;
-            private java.util.List<Object> thinkingBlocks;
+        public record ResponseMessage(String content, String role, List<Object> images, List<Object> thinkingBlocks) {
         }
     }
 
@@ -40,8 +21,8 @@ public class ChatCompletionResponse {
     public String getContent() {
         if (choices != null && !choices.isEmpty()) {
             Choice firstChoice = choices.get(0);
-            if (firstChoice.getMessage() != null) {
-                return firstChoice.getMessage().getContent();
+            if (firstChoice.message() != null) {
+                return firstChoice.message().content();
             }
         }
         return null;
@@ -50,7 +31,7 @@ public class ChatCompletionResponse {
     // Helper method to get finish reason
     public String getFinishReason() {
         if (choices != null && !choices.isEmpty()) {
-            return choices.get(0).getFinishReason();
+            return choices.get(0).finishReason();
         }
         return null;
     }
@@ -58,7 +39,7 @@ public class ChatCompletionResponse {
     // Helper method to get index
     public Integer getIndex() {
         if (choices != null && !choices.isEmpty()) {
-            return choices.get(0).getIndex();
+            return choices.get(0).index();
         }
         return null;
     }

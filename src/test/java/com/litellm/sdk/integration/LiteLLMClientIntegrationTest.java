@@ -9,7 +9,6 @@ import com.litellm.sdk.model.request.ChatCompletionRequest;
 import com.litellm.sdk.model.request.Message;
 import com.litellm.sdk.model.response.ChatCompletionResponse;
 import com.litellm.sdk.provider.Provider;
-import com.litellm.sdk.provider.openai.OpenAIProvider;
 import com.litellm.sdk.routing.Router;
 import com.litellm.sdk.routing.strategy.RoundRobinStrategy;
 import org.junit.jupiter.api.AfterEach;
@@ -83,11 +82,8 @@ class LiteLLMClientIntegrationTest {
     }
 
     private Provider createProviderFromConfig(ProviderConfig config) {
-        if (config.id().equals("openai") || config.baseUrl().contains("openai.com")) {
-            return new OpenAIProvider(config);
-        } else {
-            throw new IllegalArgumentException("Unknown provider type: " + config.id());
-        }
+        // Use a single generic provider for all configurations
+        return new com.litellm.sdk.provider.LiteLLMProvider(config);
     }
 
     @Test

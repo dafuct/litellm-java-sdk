@@ -115,7 +115,7 @@ class CaffeineCacheTest {
 
         ChatCompletionResponse result = cache.get(request1).block();
         assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo("resp-1");
+        assertThat(result.id()).isEqualTo("resp-1");
     }
 
     @Test
@@ -276,8 +276,8 @@ class CaffeineCacheTest {
 
         assertThat(result1).isNotNull();
         assertThat(result2).isNotNull();
-        assertThat(result1.getId()).isEqualTo("resp-1");
-        assertThat(result2.getId()).isEqualTo("resp-2");
+        assertThat(result1.id()).isEqualTo("resp-1");
+        assertThat(result2.id()).isEqualTo("resp-2");
     }
 
     @Test

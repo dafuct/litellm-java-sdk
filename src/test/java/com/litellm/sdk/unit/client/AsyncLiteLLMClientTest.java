@@ -134,7 +134,7 @@ class AsyncLiteLLMClientTest {
         assertThat(result).isNotNull();
         ChatCompletionResponse response = result.block();
         assertThat(response).isNotNull();
-        assertThat(response.getId()).isEqualTo("chat-123");
+        assertThat(response.id()).isEqualTo("chat-123");
         verify(mockRouter).routeChatCompletion(anyList(), any(ChatCompletionRequest.class));
     }
 
@@ -188,7 +188,7 @@ class AsyncLiteLLMClientTest {
         assertThat(result).isNotNull();
         ChatCompletionResponse response = result.block();
         assertThat(response).isNotNull();
-        assertThat(response.getId()).isEqualTo("chat-123");
+        assertThat(response.id()).isEqualTo("chat-123");
         verify(mockRouter).routeChatCompletion(anyList(), any(ChatCompletionRequest.class));
     }
 

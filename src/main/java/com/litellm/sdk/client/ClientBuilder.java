@@ -2,9 +2,7 @@ package com.litellm.sdk.client;
 
 import com.litellm.sdk.config.*;
 import com.litellm.sdk.provider.Provider;
-import com.litellm.sdk.provider.anthropic.AnthropicProvider;
-import com.litellm.sdk.provider.cohere.CohereProvider;
-import com.litellm.sdk.provider.openai.OpenAIProvider;
+import com.litellm.sdk.provider.LiteLLMProvider;
 import com.litellm.sdk.routing.Router;
 import com.litellm.sdk.routing.strategy.RoundRobinStrategy;
 import lombok.Builder;
@@ -100,13 +98,8 @@ public class ClientBuilder {
     }
 
     private Provider createProvider(ProviderConfig config) {
-        String name = config.name() != null ? config.name() : config.id();
-        return switch (name.toLowerCase()) {
-            case "openai" -> new OpenAIProvider(config);
-            case "anthropic" -> new AnthropicProvider(config);
-            case "cohere" -> new CohereProvider(config);
-            default -> throw new IllegalArgumentException("Unknown provider: " + name);
-        };
+        // Use a single generic provider for all configurations
+        return new LiteLLMProvider(config);
     }
 
     public static ClientBuilder builder() {

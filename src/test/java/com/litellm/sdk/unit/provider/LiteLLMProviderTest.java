@@ -8,7 +8,7 @@ import com.litellm.sdk.model.request.EmbeddingRequest;
 import com.litellm.sdk.model.response.ChatCompletionResponse;
 import com.litellm.sdk.model.response.TextCompletionResponse;
 import com.litellm.sdk.model.response.EmbeddingResponse;
-import com.litellm.sdk.provider.openai.OpenAIProvider;
+import com.litellm.sdk.provider.LiteLLMProvider;
 import com.litellm.sdk.provider.ProviderHealth;
 import com.litellm.sdk.provider.ProviderMetrics;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,17 +17,16 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.time.Duration;
-import java.time.Instant;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@DisplayName("OpenAIProvider Unit Tests")
-class OpenAIProviderTest {
+@DisplayName("LiteLLMProvider Unit Tests")
+class LiteLLMProviderTest {
 
-    private OpenAIProvider provider;
+    private LiteLLMProvider provider;
     private ProviderConfig config;
 
     private ChatCompletionRequest chatRequest;
@@ -45,7 +44,7 @@ class OpenAIProviderTest {
             .weight(1)
             .build();
 
-        provider = Mockito.spy(new OpenAIProvider(config));
+        provider = Mockito.spy(new LiteLLMProvider(config));
 
         Message message = Message.builder()
             .role(Message.Role.USER)
@@ -125,8 +124,8 @@ class OpenAIProviderTest {
 
         // Then
         assertThat(response).isNotNull();
-        assertThat(response.getProvider()).isEqualTo("openai");
-        assertThat(response.getModel()).isEqualTo("gpt-3.5-turbo");
+        assertThat(response.provider()).isEqualTo("openai");
+        assertThat(response.model()).isEqualTo("gpt-3.5-turbo");
         assertThat(response.getContent()).contains("OpenAI response for model: gpt-3.5-turbo");
     }
 
@@ -319,7 +318,7 @@ class OpenAIProviderTest {
         ChatCompletionResponse response = provider.chatCompletion(request).block();
 
         // Then
-        assertThat(response.getModel()).isEqualTo("gpt-4");
+        assertThat(response.model()).isEqualTo("gpt-4");
         assertThat(response.getContent()).contains("gpt-4");
     }
 
