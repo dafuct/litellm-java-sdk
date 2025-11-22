@@ -20,7 +20,11 @@ public record ProviderConfig(
         RateLimitConfig rateLimit,
         Boolean enabled,
         Integer priority,
-        Map<String, Object> customParameters
+        Map<String, Object> customParameters,
+        String project,
+        String regionName,
+        String token,
+        String organization
 ) {
     // Compact constructor for validation
     public ProviderConfig {
@@ -49,7 +53,11 @@ public record ProviderConfig(
             RateLimitConfig rateLimit,
             Boolean enabled,
             Integer priority,
-            Map<String, Object> customParameters
+            Map<String, Object> customParameters,
+            String project,
+            String regionName,
+            String token,
+            String organization
     ) {
         return new ProviderConfig(
                 id,
@@ -62,7 +70,11 @@ public record ProviderConfig(
                 rateLimit,
                 enabled,
                 priority,
-                customParameters
+                customParameters,
+                project,
+                regionName,
+                token,
+                organization
         );
     }
 
@@ -107,5 +119,21 @@ public record ProviderConfig(
      */
     public Boolean enabled() {
         return enabled != null ? enabled : true;
+    }
+
+    public String project() {
+        return project;
+    }
+
+    public String regionName() {
+        return regionName;
+    }
+
+    public String token() {
+        return token;
+    }
+
+    public String organization() {
+        return organization;
     }
 }
