@@ -220,4 +220,24 @@ public final class LiteLLMConfig {
         AZURE,
         BEDROCK
     }
+
+    public static Map<String, Double> getModelCost() {
+        return com.litellm.sdk.token.CostCalculator.getModelCost();
+    }
+
+    public static int getMaxTokens(String model) {
+        return com.litellm.sdk.token.CostCalculator.getMaxTokens(model);
+    }
+
+    public static boolean hasPricing(String model) {
+        return com.litellm.sdk.token.CostCalculator.hasPricing(model);
+    }
+
+    public static Set<String> getRegisteredModels() {
+        return com.litellm.sdk.token.CostCalculator.getRegisteredModels();
+    }
+
+    public static void registerModelPricing(String model, double inputCost, double outputCost) {
+        com.litellm.sdk.token.CostCalculator.registerModelPricing(model, inputCost, outputCost);
+    }
 }
